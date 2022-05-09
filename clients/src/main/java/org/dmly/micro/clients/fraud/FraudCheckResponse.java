@@ -1,4 +1,4 @@
-package org.dmly.micro.fraud;
+package org.dmly.micro.clients.fraud;
 
 public record FraudCheckResponse(Boolean isFraudster) {
 }
