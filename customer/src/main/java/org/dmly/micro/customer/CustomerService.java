@@ -1,6 +1,7 @@
 package org.dmly.micro.customer;
 
 import lombok.AllArgsConstructor;
+import org.dmly.micro.amqp.RabbitMQMessageProducer;
 import org.dmly.micro.clients.fraud.FraudCheckResponse;
 import org.dmly.micro.clients.fraud.FraudClient;
 import org.dmly.micro.clients.notification.NotificationClient;
@@ -15,9 +16,8 @@ import java.time.LocalDateTime;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final RestTemplate restTemplate;
     private final FraudClient fraudClient;
-    private final NotificationClient notificationClient;
+    private final RabbitMQMessageProducer rabbitMQMessageProducer;
 
     public void registerCustomer(CustomerRegistrationRequest request) {
         Customer customer = Customer.builder()
@@ -35,13 +35,17 @@ public class CustomerService {
             throw new IllegalStateException("fraudster");
         }
 
-        notificationClient.sendNotification(
-                new NotificationRequest(
-                        customer.getId(),
-                        customer.getEmail(),
-                        customer.getFirstName()
-                )
+        NotificationRequest notificationRequest = new NotificationRequest(
+                customer.getId(),
+                customer.getEmail(),
+                customer.getFirstName()
         );
+
+        rabbitMQMessageProducer.publish(
+                notificationRequest,
+                "internal.exchange",
+                "internal.notification.routing-key"
+                );
 
     }
 }
