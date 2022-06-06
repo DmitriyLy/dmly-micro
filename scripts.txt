@@ -1,11 +1,46 @@
 docker compose up -d
 
+minikube start --memory=4g
+minikube start --memory=4g --driver=hyperv
+
+minikube status
+
 minikube ip
+
+kubectl version --client
 
 kubectl run hello-world --image=amigoscode/kubernetes:hello-world --port=81
 
 kubectl get pods
 
+kubectl get all
+
+kubectl get services
+
 kubectl port-forward pod/hello-world 8080:80
 
 kubectl delete pod hello-world
+
+kubectl apply -f .\bootstrap\postgres\
+
+kubectl apply -f .\bootstrap\zipkin
+
+kubectl apply -f .\bootstrap\rabbitmq
+
+minikube ssh
+
+------------------------------------------------------------
+
+kubectl exec -it postgres-0 -- psql -U amigoscode
+
+create database customer;
+
+create database fraud;
+
+create database notification;
+
+------------------------------------------------------------
+
+kubectl logs rabbitmq-0
+
+minikube service --url rabbitmq
