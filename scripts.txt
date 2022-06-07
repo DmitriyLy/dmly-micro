@@ -27,6 +27,8 @@ kubectl apply -f .\bootstrap\zipkin
 
 kubectl apply -f .\bootstrap\rabbitmq
 
+kubectl apply -f .\minikube\services\customer
+
 minikube ssh
 
 ------------------------------------------------------------
@@ -44,3 +46,7 @@ create database notification;
 kubectl logs rabbitmq-0
 
 minikube service --url rabbitmq
+
+kubectl.exe describe pod customer-9b67f967f-frdzc
+
+kubectl.exe scale --replicas=0 deployment customer
